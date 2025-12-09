@@ -52,7 +52,7 @@ Scrappy prototype for vendor management and purchase order requisition (POR) wor
 
 **Step 1: Preliminary Questions**
 - Which Axon entity is entering this relationship?
-- Will you be sharing:
+- Will you be sharing (these should be simple yes/no checkboxes that flags this for further review or skips the review):
   - Confidential Axon info (R&D, engineering, IP)? → requires NDA
   - PII of employees/consultants/customers? → requires Privacy Policy
   - Vendor tool will host/ingest Axon data? → requires InfoSec review
