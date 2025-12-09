@@ -50,8 +50,11 @@ function getAgingColor(days, status) {
   }
 }
 
+const CURRENT_USER_EMAIL = 'jane.smith@axon.com'
+
 export default function PORList() {
-  const pors = getPORs()
+  // Only show PORs created by the current user (Jane Smith)
+  const pors = getPORs().filter(por => por.requestorEmail === CURRENT_USER_EMAIL)
 
   return (
     <div className="space-y-6">
