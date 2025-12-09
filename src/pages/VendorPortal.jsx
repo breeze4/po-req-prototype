@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useParams } from 'react-router-dom'
 import { useDropzone } from 'react-dropzone'
-import { toast } from 'sonner'
+import { toast, Toaster } from 'sonner'
 import { 
   Upload, Download, FileCheck, CheckCircle, 
   Loader2, FileText, AlertCircle 
@@ -215,6 +215,7 @@ export default function VendorPortal() {
   if (submitted) {
     return (
       <div className="min-h-screen bg-slate-100">
+        <Toaster position="top-right" richColors />
         <header className="bg-white border-b border-slate-200 py-4">
           <div className="max-w-3xl mx-auto px-4">
             <h1 className="text-xl font-bold text-slate-900">Axon Vendor Portal</h1>
@@ -238,6 +239,8 @@ export default function VendorPortal() {
 
   return (
     <div className="min-h-screen bg-slate-100">
+      <Toaster position="top-right" richColors />
+      
       {/* Header */}
       <header className="bg-white border-b border-slate-200 py-4">
         <div className="max-w-3xl mx-auto px-4">

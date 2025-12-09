@@ -1,5 +1,6 @@
 import { ArrowLeft, Building2, Calendar, CheckCircle, DollarSign, FileText, XCircle } from 'lucide-react'
-import { Link, useNavigate, useParams } from 'react-router-dom'
+import { Link, useParams } from 'react-router-dom'
+import { toast } from 'sonner'
 import { getPOR, savePOR } from '../lib/storage'
 
 import { useState } from 'react'
@@ -30,22 +31,13 @@ function formatDate(dateString) {
 
 export default function PORDetail() {
   const { id } = useParams()
-  const navigate = useNavigate()
   const [por, setPor] = useState(() => getPOR(id))
-  const [showToast, setShowToast] = useState(false)
-  const [toastMessage, setToastMessage] = useState('')
-
-  const displayToast = (message) => {
-    setToastMessage(message)
-    setShowToast(true)
-    setTimeout(() => setShowToast(false), 3000)
-  }
 
   const updateStatus = (newStatus) => {
     const updated = { ...por, status: newStatus, updatedAt: new Date().toISOString() }
     savePOR(updated)
     setPor(updated)
-    displayToast(`POR ${newStatus === 'approved' ? 'approved' : 'rejected'} successfully!`)
+    toast.success(`POR ${newStatus === 'approved' ? 'approved' : 'rejected'} successfully!`)
   }
 
   if (!por) {
@@ -75,14 +67,6 @@ export default function PORDetail() {
 
   return (
     <div className="space-y-6 pb-8">
-      {/* Toast */}
-      {showToast && (
-        <div className="fixed top-4 right-4 z-50 bg-slate-900 text-white px-4 py-3 rounded-lg shadow-lg flex items-center gap-2">
-          <CheckCircle size={18} />
-          {toastMessage}
-        </div>
-      )}
-
       <div>
         <Link
           to="/pors"

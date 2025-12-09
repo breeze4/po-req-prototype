@@ -1,5 +1,6 @@
-import { ArrowLeft, CheckCircle, FileText, Plus, Send, Trash2, Upload } from 'lucide-react'
+import { ArrowLeft, FileText, Plus, Send, Trash2, Upload } from 'lucide-react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
+import { toast } from 'sonner'
 import { getVendor, getVendors, savePOR } from '../lib/storage'
 import { useCallback, useEffect, useState } from 'react'
 
@@ -89,8 +90,6 @@ export default function PORCreate() {
   const [quoteFile, setQuoteFile] = useState(null)
   const [ocrComplete, setOcrComplete] = useState(false)
   const [isProcessingOcr, setIsProcessingOcr] = useState(false)
-  const [showToast, setShowToast] = useState(false)
-  const [toastMessage, setToastMessage] = useState('')
 
   // Header fields
   const [name, setName] = useState('')
@@ -194,9 +193,7 @@ export default function PORCreate() {
 
   // Toast helper
   const displayToast = (message) => {
-    setToastMessage(message)
-    setShowToast(true)
-    setTimeout(() => setShowToast(false), 3000)
+    toast.success(message)
   }
 
   // Validation
@@ -229,7 +226,7 @@ export default function PORCreate() {
   // Submit POR
   const handleSubmit = (sendToDynamics = false) => {
     if (!validateForm()) {
-      displayToast('Please fix the errors before submitting.')
+      toast.error('Please fix the errors before submitting.')
       return
     }
 
@@ -269,14 +266,6 @@ export default function PORCreate() {
 
   return (
     <div className="space-y-6 pb-8">
-      {/* Toast */}
-      {showToast && (
-        <div className="fixed top-4 right-4 z-50 bg-slate-900 text-white px-4 py-3 rounded-lg shadow-lg flex items-center gap-2">
-          <CheckCircle size={18} />
-          {toastMessage}
-        </div>
-      )}
-
       <div>
         <Link
           to="/pors"
