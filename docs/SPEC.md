@@ -1,80 +1,117 @@
 # Procurement-One
 
-Extremely scrappy prototype of an application that allows vendor management and purchase order requisition workflow. We are replacing a gigantic complex horrible process.
+Scrappy prototype for vendor management and purchase order requisition (POR) workflow. Replaces a gigantic complex horrible process.
 
-There will be several screens to the dashboard:
-- vendor management (search + create a vendor)
-    - vendor creation (form with basic contact info and starts a form for the vendor to fill out (the vendor intake form))
-    - vendor intake form (vendor submits a set of forms to join the vendor network)
+**Prototype constraints:**
+- All data in localStorage
+- Hardcoded user: "Jane Smith" / jane.smith@axon.com
 
-- purchase order requisition (POR) creation
-    - start with uploading a quote/statement of work (SOW)
-    - takes you to a form with 13 specific fields needed, these can be partially populated by the quote/SOW
-    - fake-submits the form to Dynamics 365
-    - takes you back to the POR management screen
+**Mocked behaviors:**
+- 📧 **Email sending** — shows content in modal, no actual email sent
+- 📄 **PDF downloads** — button click shows toast "PDF downloaded" (no real file)
+- 📤 **File uploads** — dropzone accepts files but just stores filename + timestamp in localStorage
+- 🔍 **OCR extraction** — returns hardcoded values regardless of uploaded file
+- ✍️ **Signature detection** — always returns "signature detected" after 1s delay
+- 🏦 **Banking validation** — basic format checks only (9-digit routing, etc.)
+- 📊 **Dynamics 365** — "Send to Dynamics" shows success toast, updates status locally
+- ⏳ **Status progression** — POR status changes are manual buttons in prototype (not real workflow)
 
-- purchase order requisition management screen
-    - be able to see all the PORs that are in progress for you the requestor
-    - see the current status and other data fields
+---
 
+## Navigation
 
+- **Dashboard** — home with links to Vendors and PORs
+- **Vendors** — list, search, create
+- **PORs** — list, create, view
+
+---
 
 ## Screens
 
-### Vendor Intake (Vendor Creation Workflow)
+| # | Screen | Route | Description |
+|---|--------|-------|-------------|
+| 1 | Dashboard | `/` | Links to Vendors and PORs |
+| 2 | Vendor List | `/vendors` | Search + results + "Add Vendor" button |
+| 3 | Vendor Create | `/vendors/new` | Preliminary questions form |
+| 4 | Email Preview | `/vendors/:id/email` | Edit and send invite email to vendor |
+| 5 | Vendor Portal | `/portal/:vendorId` | Vendor's view — upload documents (no auth) |
+| 6 | Vendor Detail | `/vendors/:id` | View vendor status, docs, start POR |
+| 7 | POR Create | `/pors/new?vendorId=` | Upload quote → fill form → submit |
+| 8 | POR List | `/pors` | Table of all PORs with status |
+| 9 | POR Detail | `/pors/:id` | View submitted POR (read-only) |
 
-A. Search for Vendor
-    1. Fuzzy search (e.g.: search for “robert half”, search query is “*robert half*”)
-    2. See the list of results with some basic info on them
-B. If Vendor doesn’t exist
-    3. Axon owner answers some preliminary questions 
-        1. Which Axon entity is entering this relationship
-        2. Will you be sharing:
-            1. Confidential Axon information with the vendor (R&D, engineering, IP)
-                1. If yes → route NDA
-            2. PII Axon employees or consultants or customers (human resources)
-                1. If yes → route Privacy Policy
-            3. The vendor has a tool that Axon is looking to purchase and that tool will host or ingest Axon data
-                1. If yes → route InfoSec documents
-    4. Draft email to Vendor 
-        1. Form email with templates for each of the things included
-            1. Here is a link to create your vendor account...
-            2. When you login you’ll be required to provide these documents:
-                1. <list of documents listed below under the vendor form>
-            3. Portal link to Vendor form (for the vendor’s use)
-    5. Axon owner edits and approves the email and hits send → will send to vendor, with a copy to Axon owner
-    6. Vendor fills and uploads all information in portal. 
-    7. Axon owner pushes the quote to POR workflow
+---
 
+## Vendor Intake Workflow
 
+### A. Search for Vendor
+1. Fuzzy search (e.g., "robert half")
+2. Show results with: name, status, contact email
 
-### Vendor form:
+### B. Create New Vendor (if not found)
 
-* Documents to review and sign
-    * Master Supplier Agreement we expect all vendors to sign. 
-        * PDF to download
-        * Drag-and-drop upload box to put the signed PDF back in there
-    * Signed W-9 or W8 BEN-E
-        * Drag and drop upload box to put a signed PDF
-        * Ideal: OCR and verify there is a signature
-    * Banking/Payment information
-        * Fill out a form, can do validation if numbers are wrong
-    * Vendor uploads quote (version controlling)
-        * Drag and drop PDF
-        * Ideal: OCR and extract the vendor info and line item quotes
-* Submit the form and then it becomes available for POR
+**Step 1: Preliminary Questions**
+- Which Axon entity is entering this relationship?
+- Will you be sharing:
+  - Confidential Axon info (R&D, engineering, IP)? → requires NDA
+  - PII of employees/consultants/customers? → requires Privacy Policy
+  - Vendor tool will host/ingest Axon data? → requires InfoSec review
 
+**Step 2: Email Preview**
+- Auto-generated email template with:
+  - Portal link for vendor
+  - List of required documents based on preliminary answers
+- Axon owner can edit, then hits "Send"
+- 📧 *MOCKED: Email content shown in modal, logged to console*
 
+**Step 3: Vendor Completes Portal**
+- Vendor receives link, fills out Vendor Form (see below)
 
-## Purchase order requisition 
+**Step 4: Ready for POR**
+- Once vendor submits, Axon owner can create POR
 
+---
 
-Prototype:
-- Requestor workflow only
+## Vendor Portal Form
 
-Create POs
-- 13 fields
-- "send to Dynamics" mock button
+Vendor fills this out after receiving invite email.
 
-Manage POs
-- see all your open POs, date they were submitted, current status, total PO amount, total invoice, who is it waiting for
+| Section | Details | Mock Behavior |
+|---------|---------|---------------|
+| **Master Supplier Agreement** | Download PDF, upload signed copy | 📄 Download = toast only; 📤 Upload = stores filename |
+| **W-9 or W8 BEN-E** | Upload signed PDF | 📤 Stores filename; ✍️ "Signature detected" after 1s |
+| **Banking Info** | Form: bank name, routing #, account #, type | 🏦 Basic format validation only |
+| **Quote** | Upload PDF | 📤 Stores filename; 🔍 Returns hardcoded OCR data |
+
+Submit → vendor status becomes "active", available for POR.
+
+---
+
+## Purchase Order Requisition (POR)
+
+### Create POR
+
+**Flow:** Upload quote → Fill 13 fields → Review & Submit
+
+1. Select vendor (or start from Vendor Detail page)
+2. Upload quote PDF — 🔍 *MOCKED: OCR returns hardcoded values to pre-fill fields*
+3. Fill/edit 13 fields (see DATA.md)
+4. Review and submit
+5. "Send to Dynamics" button — 📊 *MOCKED: Shows success toast, saves to localStorage*
+6. Redirect to POR List
+
+### POR List
+
+Table columns:
+- Vendor Name
+- Description
+- Amount
+- Status
+- Submitted Date
+- Actions (View)
+
+### POR Detail
+
+Read-only view of all 13 fields.
+
+⏳ *MOCKED: Status can be manually changed via buttons (Approve/Reject) for demo purposes*
