@@ -64,3 +64,17 @@ B. If Vendor doesn’t exist
         * Ideal: OCR and extract the vendor info and line item quotes
 * Submit the form and then it becomes available for POR
 
+
+
+## Purchase order requisition 
+
+
+Prototype:
+- Requestor workflow only
+
+Create POs
+- 13 fields
+- "send to Dynamics" mock button
+
+Manage POs
+- see all your open POs, date they were submitted, current status, total PO amount, total invoice, who is it waiting for
