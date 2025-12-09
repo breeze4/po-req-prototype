@@ -12,7 +12,7 @@ export default function DebugBar() {
 
   const handleCreateData = () => {
     createDemoData()
-    toast.success('Demo data created: 6 vendors, 6 PORs')
+    toast.success('Demo data created: 6 vendors, 9 PORs (4 requestors)')
     setTimeout(() => window.location.reload(), 500)
   }
 

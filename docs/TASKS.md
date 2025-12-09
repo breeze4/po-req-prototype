@@ -1,43 +1,65 @@
 # Tasks
 
-## Debug Bar ✅
+## Approvals Page ✅
 
-Created a debug bar at the bottom of the app for development/demo purposes.
+### Data Model Updates
+- [x] Add `requestor` and `requestorEmail` fields to POR model
+- [x] Update seedData.js with multiple requestors (Tom Bradley, Sarah Chen, Mike Johnson)
+- [x] Create PORs from different requestors in mock data (mix of Jane's and others')
+- [x] Add `pending_approval` status option
 
-### UI
-- [x] Fixed position bar at bottom of screen (only in Layout, not VendorPortal)
-- [x] Semi-transparent dark background
-- [x] Small text, doesn't interfere with main app
-- [x] Shows "🛠 Debug" label
+### Navigation & Routing
+- [x] Add "Approvals" to nav in Layout.jsx (with icon)
+- [x] Add route `/approvals` in App.jsx
+- [x] Create Approvals.jsx page component
+- [x] Update Dashboard with link to Approvals (with pending badge)
 
-### Clear Data Button
-- [x] Button labeled "Clear Data"
-- [x] Calls `clearAllData()` from storage.js
-- [x] Shows toast confirmation
-- [x] Triggers page reload to reflect empty state
+### Approvals Page UI (`/approvals`)
 
-### Create Data Button
-- [x] Button labeled "Create Data"
-- [x] Creates representative sample data:
+**Summary Stats (top of page):**
+- [x] Card: Total pending approvals count
+- [x] Card: Assigned to Jane count
+- [x] Card: Overdue (8+ days) count
 
-**Vendors (6 total):**
-| Name | Status | Notes |
-|------|--------|-------|
-| Acme Consulting LLC | active | All docs complete |
-| Robert Half International | active | All docs complete |
-| CloudSecure Technologies | pending | Missing MSA and banking |
-| DataFlow Analytics Inc | incomplete | Missing most docs |
-| Sterling Office Supplies | active | All docs complete |
-| Apex Training Solutions | pending | Missing W-9 |
+**Filter Controls:**
+- [x] Toggle/tabs: "Assigned to Me" (default) vs "Show All"
+- [x] Visual indicator of which filter is active
 
-**PORs (5 total):**
-| Vendor | Amount | Status | Age | Assignee |
-|--------|--------|--------|-----|----------|
-| Acme Consulting | $15,000 | submitted | 1 day ago | Brittany Bagley |
-| Robert Half | $45,000 | approved | 5 days ago | Dave Iacovelli |
-| Sterling Office | $2,500 | sent_to_dynamics | 3 days ago | Jennifer Mak |
-| Acme Consulting | $8,750 | rejected | 10 days ago | Dave Iacovelli |
-| Robert Half | $22,000 | submitted | 8 days ago | Brittany Bagley |
+**Approvals Table:**
+- [x] Column: Requestor Name
+- [x] Column: Vendor Name
+- [x] Column: Description
+- [x] Column: Amount (formatted currency)
+- [x] Column: Days Aged (with SLA color coding)
+- [x] Column: Assigned To
+- [x] Column: Actions
 
-- [x] Shows toast confirmation
-- [x] Triggers page reload to show new data
+**Actions Column:**
+- [x] "View" button → navigates to `/pors/:id`
+- [x] "Approve" button (green) → quick approve with confirmation toast
+- [x] "Reject" button (red) → opens modal for rejection reason
+
+### Reject Modal
+- [x] Modal with text input for rejection reason
+- [x] Cancel and Confirm buttons
+- [x] On confirm: update POR status to `rejected`, add `rejectionReason` field
+- [x] Show toast confirmation
+
+### Mock Data Distribution
+
+**PORs from Jane Smith (jane.smith@axon.com):** (her own, not in approval queue)
+- Q1 Strategy Consulting - $15K - approved
+- Annual Engineering Staff Augmentation - $2.64M - sent_to_dynamics
+- Office Equipment Refresh - $2.5K - approved
+
+**PORs from Tom Bradley (tom.bradley@axon.com):**
+- Enterprise Digital Transformation - $1.5M - submitted (assigned to Jane)
+- Cloud Infrastructure Security Upgrade - $340K - submitted (assigned to Jane)
+
+**PORs from Sarah Chen (sarah.chen@axon.com):**
+- Market Research Analysis - $8.75K - rejected
+- Annual Software Licenses - $125K - submitted (assigned to Jane)
+
+**PORs from Mike Johnson (mike.johnson@axon.com):**
+- Executive Assistant Placement - $22K - submitted (assigned to Jane)
+- Annual Trade Show Booth - $78K - submitted (assigned to Brittany)

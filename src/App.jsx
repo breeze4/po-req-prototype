@@ -10,6 +10,7 @@ import VendorPortal from './pages/VendorPortal'
 import PORList from './pages/PORList'
 import PORCreate from './pages/PORCreate'
 import PORDetail from './pages/PORDetail'
+import Approvals from './pages/Approvals'
 import { seedVendors } from './lib/seedData'
 
 export default function App() {
@@ -32,6 +33,7 @@ export default function App() {
         <Route path="/pors" element={<PORList />} />
         <Route path="/pors/new" element={<PORCreate />} />
         <Route path="/pors/:id" element={<PORDetail />} />
+        <Route path="/approvals" element={<Approvals />} />
       </Route>
     </Routes>
   )

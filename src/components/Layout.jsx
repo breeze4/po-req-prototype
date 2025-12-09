@@ -1,4 +1,4 @@
-import { FileText, Home, Users } from 'lucide-react'
+import { CheckSquare, FileText, Home, Users } from 'lucide-react'
 import { Link, Outlet, useLocation } from 'react-router-dom'
 
 import { Toaster } from 'sonner'
@@ -8,6 +8,7 @@ const navItems = [
   { to: '/', label: 'Dashboard', icon: Home },
   { to: '/vendors', label: 'Vendors', icon: Users },
   { to: '/pors', label: 'PORs', icon: FileText },
+  { to: '/approvals', label: 'Approvals', icon: CheckSquare },
 ]
 
 export default function Layout() {

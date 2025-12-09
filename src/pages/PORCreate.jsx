@@ -248,6 +248,8 @@ export default function PORCreate() {
       submittedAt: new Date().toISOString(),
       createdAt: new Date().toISOString(),
       createdBy: 'jane.smith@axon.com',
+      requestor: 'Jane Smith',
+      requestorEmail: 'jane.smith@axon.com',
       assignee: getRandomAssignee(),
     }
 
