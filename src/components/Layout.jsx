@@ -2,6 +2,7 @@ import { FileText, Home, Users } from 'lucide-react'
 import { Link, Outlet, useLocation } from 'react-router-dom'
 
 import { Toaster } from 'sonner'
+import DebugBar from './DebugBar'
 
 const navItems = [
   { to: '/', label: 'Dashboard', icon: Home },
@@ -58,9 +59,12 @@ export default function Layout() {
       </header>
 
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 py-6">
+      <main className="max-w-7xl mx-auto px-4 py-6 pb-16">
         <Outlet />
       </main>
+
+      {/* Debug Bar */}
+      <DebugBar />
     </div>
   )
 }

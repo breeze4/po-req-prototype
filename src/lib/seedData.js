@@ -1,4 +1,4 @@
-import { getVendors, saveVendor } from './storage'
+import { getVendors, saveVendor, savePOR, clearAllData } from './storage'
 
 const mockVendors = [
   {
@@ -129,6 +129,210 @@ const mockVendors = [
   },
 ]
 
+// Helper to create a date X days ago
+function daysAgo(days) {
+  const date = new Date()
+  date.setDate(date.getDate() - days)
+  return date.toISOString()
+}
+
+const mockPORs = [
+  {
+    id: 'POR-001',
+    vendorId: 'v-001',
+    vendorName: 'Acme Consulting LLC',
+    name: 'Q1 Strategy Consulting Engagement',
+    description: 'Q1 Strategy Consulting Engagement',
+    costCenter: 'CC-1001 Engineering',
+    profitCenter: 'PC-1001 Engineering',
+    projectCode: 'PROJ-2025-001',
+    country: 'USA - United States',
+    attachments: 'SOW_Acme_Q1.pdf',
+    lineItems: [
+      {
+        id: 'li-001',
+        line: 1,
+        productName: 'Strategy consulting services',
+        lineAmount: '15000',
+        category: '6400 - Consulting',
+        currency: 'USD',
+        purposeCode: '',
+        vendorName: 'Acme Consulting LLC',
+        vendorKey: 'v-001',
+        startDate: '2025-01-15',
+        endDate: '2025-03-31',
+        billingFrequency: 'Monthly',
+      },
+    ],
+    netAmount: 15000,
+    totalAmount: 15000,
+    currency: 'USD',
+    status: 'submitted',
+    submittedAt: daysAgo(1),
+    createdAt: daysAgo(1),
+    createdBy: 'jane.smith@axon.com',
+    assignee: 'Brittany Bagley',
+  },
+  {
+    id: 'POR-002',
+    vendorId: 'v-002',
+    vendorName: 'Robert Half International',
+    name: 'Contract Staffing - Engineering Team',
+    description: 'Contract Staffing - Engineering Team',
+    costCenter: 'CC-1001 Engineering',
+    profitCenter: 'PC-1001 Engineering',
+    projectCode: 'PROJ-2025-002',
+    country: 'USA - United States',
+    attachments: 'Staffing_Agreement_RH.pdf',
+    lineItems: [
+      {
+        id: 'li-002',
+        line: 1,
+        productName: 'Senior Software Engineer (Contract)',
+        lineAmount: '25000',
+        category: '6100 - Professional Services',
+        currency: 'USD',
+        purposeCode: '',
+        vendorName: 'Robert Half International',
+        vendorKey: 'v-002',
+        startDate: '2025-01-01',
+        endDate: '2025-06-30',
+        billingFrequency: 'Monthly',
+      },
+      {
+        id: 'li-003',
+        line: 2,
+        productName: 'QA Engineer (Contract)',
+        lineAmount: '20000',
+        category: '6100 - Professional Services',
+        currency: 'USD',
+        purposeCode: '',
+        vendorName: 'Robert Half International',
+        vendorKey: 'v-002',
+        startDate: '2025-01-01',
+        endDate: '2025-06-30',
+        billingFrequency: 'Monthly',
+      },
+    ],
+    netAmount: 45000,
+    totalAmount: 45000,
+    currency: 'USD',
+    status: 'approved',
+    submittedAt: daysAgo(5),
+    createdAt: daysAgo(5),
+    createdBy: 'jane.smith@axon.com',
+    assignee: 'Dave Iacovelli',
+  },
+  {
+    id: 'POR-003',
+    vendorId: 'v-005',
+    vendorName: 'Sterling Office Supplies',
+    name: 'Office Equipment Refresh',
+    description: 'Office Equipment Refresh',
+    costCenter: 'CC-1004 Operations',
+    profitCenter: 'PC-1004 Operations',
+    projectCode: '',
+    country: 'USA - United States',
+    attachments: 'Quote_Sterling_Chairs.pdf',
+    lineItems: [
+      {
+        id: 'li-004',
+        line: 1,
+        productName: 'Ergonomic Office Chairs (25 units)',
+        lineAmount: '2500',
+        category: '6300 - Hardware',
+        currency: 'USD',
+        purposeCode: '',
+        vendorName: 'Sterling Office Supplies',
+        vendorKey: 'v-005',
+        startDate: '2025-02-01',
+        endDate: '2025-02-15',
+        billingFrequency: 'Upon Delivery',
+      },
+    ],
+    netAmount: 2500,
+    totalAmount: 2500,
+    currency: 'USD',
+    status: 'sent_to_dynamics',
+    submittedAt: daysAgo(3),
+    createdAt: daysAgo(3),
+    createdBy: 'jane.smith@axon.com',
+    assignee: 'Jennifer Mak',
+  },
+  {
+    id: 'POR-004',
+    vendorId: 'v-001',
+    vendorName: 'Acme Consulting LLC',
+    name: 'Market Research Analysis',
+    description: 'Market Research Analysis',
+    costCenter: 'CC-1003 Marketing',
+    profitCenter: 'PC-1003 Marketing',
+    projectCode: 'PROJ-2024-MKT',
+    country: 'USA - United States',
+    attachments: 'Proposal_MarketResearch.pdf',
+    lineItems: [
+      {
+        id: 'li-005',
+        line: 1,
+        productName: 'Competitive market analysis report',
+        lineAmount: '8750',
+        category: '6400 - Consulting',
+        currency: 'USD',
+        purposeCode: '',
+        vendorName: 'Acme Consulting LLC',
+        vendorKey: 'v-001',
+        startDate: '2024-11-01',
+        endDate: '2024-12-15',
+        billingFrequency: 'Upon Completion',
+      },
+    ],
+    netAmount: 8750,
+    totalAmount: 8750,
+    currency: 'USD',
+    status: 'rejected',
+    submittedAt: daysAgo(10),
+    createdAt: daysAgo(10),
+    createdBy: 'jane.smith@axon.com',
+    assignee: 'Dave Iacovelli',
+  },
+  {
+    id: 'POR-005',
+    vendorId: 'v-002',
+    vendorName: 'Robert Half International',
+    name: 'Executive Assistant Placement',
+    description: 'Executive Assistant Placement',
+    costCenter: 'CC-1004 Operations',
+    profitCenter: 'PC-1004 Operations',
+    projectCode: '',
+    country: 'USA - United States',
+    attachments: 'Placement_Agreement.pdf',
+    lineItems: [
+      {
+        id: 'li-006',
+        line: 1,
+        productName: 'Executive Assistant placement fee',
+        lineAmount: '22000',
+        category: '6100 - Professional Services',
+        currency: 'USD',
+        purposeCode: '',
+        vendorName: 'Robert Half International',
+        vendorKey: 'v-002',
+        startDate: '2025-01-15',
+        endDate: '2025-01-15',
+        billingFrequency: 'Upfront',
+      },
+    ],
+    netAmount: 22000,
+    totalAmount: 22000,
+    currency: 'USD',
+    status: 'submitted',
+    submittedAt: daysAgo(8),
+    createdAt: daysAgo(8),
+    createdBy: 'jane.smith@axon.com',
+    assignee: 'Brittany Bagley',
+  },
+]
+
 export function seedVendors() {
   // Only seed if no vendors exist
   if (getVendors().length === 0) {
@@ -137,3 +341,10 @@ export function seedVendors() {
   }
 }
 
+// Create all demo data (vendors + PORs)
+export function createDemoData() {
+  clearAllData()
+  mockVendors.forEach(vendor => saveVendor(vendor))
+  mockPORs.forEach(por => savePOR(por))
+  console.log('Created demo data: 6 vendors, 5 PORs')
+}
