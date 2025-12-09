@@ -144,6 +144,20 @@ const REQUESTORS = {
   mike: { name: 'Mike Johnson', email: 'mike.johnson@axon.com' },
 }
 
+// Assignee rules based on POR amount:
+// - Brittany Bagley: Over $1M
+// - Dave Iacovelli: $250K - $1M
+// - Jennifer Mak: Under $250K
+function getAssigneeByAmount(amount) {
+  if (amount >= 1000000) {
+    return 'Brittany Bagley'
+  } else if (amount >= 250000) {
+    return 'Dave Iacovelli'
+  } else {
+    return 'Jennifer Mak'
+  }
+}
+
 const mockPORs = [
   // === Jane Smith's PORs (her own, already processed) ===
   {
@@ -182,7 +196,7 @@ const mockPORs = [
     createdBy: REQUESTORS.jane.email,
     requestor: REQUESTORS.jane.name,
     requestorEmail: REQUESTORS.jane.email,
-    assignee: 'Brittany Bagley',
+    assignee: 'Jennifer Mak', // $15K < $250K
   },
   {
     id: 'POR-002',
@@ -234,7 +248,7 @@ const mockPORs = [
     createdBy: REQUESTORS.jane.email,
     requestor: REQUESTORS.jane.name,
     requestorEmail: REQUESTORS.jane.email,
-    assignee: 'Dave Iacovelli',
+    assignee: 'Brittany Bagley', // $2.64M > $1M
   },
   {
     id: 'POR-003',
@@ -340,7 +354,7 @@ const mockPORs = [
     createdBy: REQUESTORS.tom.email,
     requestor: REQUESTORS.tom.name,
     requestorEmail: REQUESTORS.tom.email,
-    assignee: 'Jane Smith',
+    assignee: 'Brittany Bagley', // $1.5M > $1M
   },
   {
     id: 'POR-005',
@@ -392,7 +406,7 @@ const mockPORs = [
     createdBy: REQUESTORS.tom.email,
     requestor: REQUESTORS.tom.name,
     requestorEmail: REQUESTORS.tom.email,
-    assignee: 'Jane Smith',
+    assignee: 'Dave Iacovelli', // $340K is $250K-$1M
   },
 
   // === Sarah Chen's PORs ===
@@ -432,7 +446,7 @@ const mockPORs = [
     createdBy: REQUESTORS.sarah.email,
     requestor: REQUESTORS.sarah.name,
     requestorEmail: REQUESTORS.sarah.email,
-    assignee: 'Dave Iacovelli',
+    assignee: 'Jennifer Mak', // $8.75K < $250K
     rejectionReason: 'Budget not approved for Q4. Please resubmit for Q1 budget cycle.',
   },
   {
@@ -471,7 +485,7 @@ const mockPORs = [
     createdBy: REQUESTORS.sarah.email,
     requestor: REQUESTORS.sarah.name,
     requestorEmail: REQUESTORS.sarah.email,
-    assignee: 'Jane Smith',
+    assignee: 'Jennifer Mak', // $125K < $250K
   },
 
   // === Mike Johnson's PORs ===
@@ -511,7 +525,7 @@ const mockPORs = [
     createdBy: REQUESTORS.mike.email,
     requestor: REQUESTORS.mike.name,
     requestorEmail: REQUESTORS.mike.email,
-    assignee: 'Jane Smith',
+    assignee: 'Jennifer Mak', // $22K < $250K
   },
   {
     id: 'POR-009',
@@ -563,7 +577,7 @@ const mockPORs = [
     createdBy: REQUESTORS.mike.email,
     requestor: REQUESTORS.mike.name,
     requestorEmail: REQUESTORS.mike.email,
-    assignee: 'Brittany Bagley',
+    assignee: 'Jennifer Mak', // $78K < $250K
   },
 ]
 

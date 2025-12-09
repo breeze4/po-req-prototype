@@ -3,10 +3,10 @@ import { Users, FileText, ArrowRight, CheckSquare } from 'lucide-react'
 import { getPORs } from '../lib/storage'
 
 export default function Dashboard() {
-  // Get pending approvals count for badge
+  // Get pending approvals count for badge (PORs submitted by others, not Jane)
   const pors = getPORs()
   const pendingCount = pors.filter(por => 
-    por.status === 'submitted' && por.assignee === 'Jane Smith'
+    por.status === 'submitted' && por.requestorEmail !== 'jane.smith@axon.com'
   ).length
 
   return (

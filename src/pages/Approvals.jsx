@@ -5,6 +5,7 @@ import { toast } from 'sonner'
 import { getPORs, savePOR } from '../lib/storage'
 
 const CURRENT_USER = 'Jane Smith'
+const CURRENT_USER_EMAIL = 'jane.smith@axon.com'
 
 function formatCurrency(amount, currency = 'USD') {
   return new Intl.NumberFormat('en-US', {
@@ -36,22 +37,26 @@ function getAgingColor(days) {
 
 export default function Approvals() {
   const [pors, setPors] = useState(() => getPORs())
-  const [filter, setFilter] = useState('mine') // 'mine' or 'all'
+  const [filter, setFilter] = useState('all') // 'all' or specific assignee name
   const [rejectModalOpen, setRejectModalOpen] = useState(false)
   const [rejectingPor, setRejectingPor] = useState(null)
   const [rejectReason, setRejectReason] = useState('')
 
-  // Get pending approvals (submitted status only)
-  const pendingPors = pors.filter(por => por.status === 'submitted')
+  // Get pending approvals (submitted status, from other requestors - not Jane's own)
+  const pendingPors = pors.filter(por => 
+    por.status === 'submitted' && por.requestorEmail !== CURRENT_USER_EMAIL
+  )
   
-  // Filter based on toggle
-  const filteredPors = filter === 'mine' 
-    ? pendingPors.filter(por => por.assignee === CURRENT_USER)
-    : pendingPors
+  // Filter based on toggle - by assignee (amount-based: Brittany >$1M, Dave $250K-$1M, Jen <$250K)
+  const filteredPors = filter === 'all' 
+    ? pendingPors
+    : pendingPors.filter(por => por.assignee === filter)
 
   // Stats
   const totalPending = pendingPors.length
-  const assignedToMe = pendingPors.filter(por => por.assignee === CURRENT_USER).length
+  const byBrittany = pendingPors.filter(por => por.assignee === 'Brittany Bagley').length
+  const byDave = pendingPors.filter(por => por.assignee === 'Dave Iacovelli').length
+  const byJennifer = pendingPors.filter(por => por.assignee === 'Jennifer Mak').length
   const overdue = pendingPors.filter(por => getDaysAged(por.createdAt) > 7).length
 
   const handleApprove = (por) => {
@@ -101,7 +106,7 @@ export default function Approvals() {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid md:grid-cols-3 gap-4">
+      <div className="grid md:grid-cols-4 gap-4">
         <div className="bg-white rounded-xl border border-slate-200 p-4">
           <div className="flex items-center gap-3">
             <div className="p-2 bg-blue-100 rounded-lg">
@@ -119,19 +124,30 @@ export default function Approvals() {
               <User className="text-purple-600" size={20} />
             </div>
             <div>
-              <p className="text-sm text-slate-500">Assigned to Me</p>
-              <p className="text-2xl font-bold text-slate-900">{assignedToMe}</p>
+              <p className="text-sm text-slate-500">Brittany (&gt;$1M)</p>
+              <p className="text-2xl font-bold text-slate-900">{byBrittany}</p>
             </div>
           </div>
         </div>
         <div className="bg-white rounded-xl border border-slate-200 p-4">
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-red-100 rounded-lg">
-              <AlertTriangle className="text-red-600" size={20} />
+            <div className="p-2 bg-amber-100 rounded-lg">
+              <User className="text-amber-600" size={20} />
             </div>
             <div>
-              <p className="text-sm text-slate-500">Overdue (8+ days)</p>
-              <p className="text-2xl font-bold text-slate-900">{overdue}</p>
+              <p className="text-sm text-slate-500">Dave ($250K-$1M)</p>
+              <p className="text-2xl font-bold text-slate-900">{byDave}</p>
+            </div>
+          </div>
+        </div>
+        <div className="bg-white rounded-xl border border-slate-200 p-4">
+          <div className="flex items-center gap-3">
+            <div className="p-2 bg-emerald-100 rounded-lg">
+              <User className="text-emerald-600" size={20} />
+            </div>
+            <div>
+              <p className="text-sm text-slate-500">Jennifer (&lt;$250K)</p>
+              <p className="text-2xl font-bold text-slate-900">{byJennifer}</p>
             </div>
           </div>
         </div>
@@ -139,18 +155,8 @@ export default function Approvals() {
 
       {/* Filter Toggle */}
       <div className="flex items-center gap-2">
-        <span className="text-sm text-slate-500">Show:</span>
+        <span className="text-sm text-slate-500">Filter by assignee:</span>
         <div className="inline-flex rounded-lg border border-slate-200 p-1 bg-white">
-          <button
-            onClick={() => setFilter('mine')}
-            className={`px-3 py-1.5 text-sm font-medium rounded-md transition-colors ${
-              filter === 'mine'
-                ? 'bg-slate-900 text-white'
-                : 'text-slate-600 hover:text-slate-900'
-            }`}
-          >
-            Assigned to Me ({assignedToMe})
-          </button>
           <button
             onClick={() => setFilter('all')}
             className={`px-3 py-1.5 text-sm font-medium rounded-md transition-colors ${
@@ -159,7 +165,37 @@ export default function Approvals() {
                 : 'text-slate-600 hover:text-slate-900'
             }`}
           >
-            Show All ({totalPending})
+            All ({totalPending})
+          </button>
+          <button
+            onClick={() => setFilter('Brittany Bagley')}
+            className={`px-3 py-1.5 text-sm font-medium rounded-md transition-colors ${
+              filter === 'Brittany Bagley'
+                ? 'bg-purple-600 text-white'
+                : 'text-slate-600 hover:text-slate-900'
+            }`}
+          >
+            Brittany ({byBrittany})
+          </button>
+          <button
+            onClick={() => setFilter('Dave Iacovelli')}
+            className={`px-3 py-1.5 text-sm font-medium rounded-md transition-colors ${
+              filter === 'Dave Iacovelli'
+                ? 'bg-amber-600 text-white'
+                : 'text-slate-600 hover:text-slate-900'
+            }`}
+          >
+            Dave ({byDave})
+          </button>
+          <button
+            onClick={() => setFilter('Jennifer Mak')}
+            className={`px-3 py-1.5 text-sm font-medium rounded-md transition-colors ${
+              filter === 'Jennifer Mak'
+                ? 'bg-emerald-600 text-white'
+                : 'text-slate-600 hover:text-slate-900'
+            }`}
+          >
+            Jennifer ({byJennifer})
           </button>
         </div>
       </div>
@@ -184,9 +220,9 @@ export default function Approvals() {
                 <td colSpan={7} className="px-4 py-12 text-center">
                   <CheckCircle className="mx-auto text-emerald-300" size={48} />
                   <p className="mt-4 text-slate-500">
-                    {filter === 'mine' 
-                      ? 'No approvals assigned to you!' 
-                      : 'No pending approvals!'}
+                    {filter === 'all' 
+                      ? 'No pending approvals!' 
+                      : `No pending approvals for ${filter}!`}
                   </p>
                 </td>
               </tr>
@@ -194,10 +230,9 @@ export default function Approvals() {
               filteredPors.map((por) => {
                 const daysAged = getDaysAged(por.createdAt)
                 const agingColor = getAgingColor(daysAged)
-                const isAssignedToMe = por.assignee === CURRENT_USER
                 
                 return (
-                  <tr key={por.id} className={`hover:bg-slate-50 ${isAssignedToMe ? '' : 'opacity-75'}`}>
+                  <tr key={por.id} className="hover:bg-slate-50">
                     <td className="px-4 py-4">
                       <div>
                         <span className="font-medium text-slate-900">{por.requestor}</span>
@@ -222,7 +257,11 @@ export default function Approvals() {
                       </span>
                     </td>
                     <td className="px-4 py-4">
-                      <span className={`text-sm ${isAssignedToMe ? 'font-medium text-purple-600' : 'text-slate-500'}`}>
+                      <span className={`text-sm font-medium px-2 py-0.5 rounded ${
+                        por.assignee === 'Brittany Bagley' ? 'bg-purple-100 text-purple-700' :
+                        por.assignee === 'Dave Iacovelli' ? 'bg-amber-100 text-amber-700' :
+                        'bg-emerald-100 text-emerald-700'
+                      }`}>
                         {por.assignee}
                       </span>
                     </td>

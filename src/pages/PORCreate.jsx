@@ -64,11 +64,18 @@ const MOCK_OCR_RESPONSE = {
   endDate: '2025-06-30',
 }
 
-// Assignees for POR workflow
-const ASSIGNEES = ['Brittany Bagley', 'Dave Iacovelli', 'Jennifer Mak']
-
-function getRandomAssignee() {
-  return ASSIGNEES[Math.floor(Math.random() * ASSIGNEES.length)]
+// Assignee rules based on POR amount:
+// - Brittany Bagley: Over $1M
+// - Dave Iacovelli: $250K - $1M
+// - Jennifer Mak: Under $250K
+function getAssigneeByAmount(amount) {
+  if (amount >= 1000000) {
+    return 'Brittany Bagley'
+  } else if (amount >= 250000) {
+    return 'Dave Iacovelli'
+  } else {
+    return 'Jennifer Mak'
+  }
 }
 
 function createEmptyLineItem(lineNumber) {
@@ -250,7 +257,7 @@ export default function PORCreate() {
       createdBy: 'jane.smith@axon.com',
       requestor: 'Jane Smith',
       requestorEmail: 'jane.smith@axon.com',
-      assignee: getRandomAssignee(),
+      assignee: getAssigneeByAmount(totalAmount),
     }
 
     savePOR(por)
