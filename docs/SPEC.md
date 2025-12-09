@@ -4,7 +4,8 @@ Scrappy prototype for vendor management and purchase order requisition (POR) wor
 
 **Prototype constraints:**
 - All data in localStorage
-- Hardcoded user: "Jane Smith" / jane.smith@axon.com
+- Hardcoded user: "Jane Smith" / jane.smith@axon.com (logged-in approver)
+- Multiple requestors exist in mock data (Jane sees their PORs in Approvals queue)
 
 **Mocked behaviors:**
 - 📧 **Email sending** — shows content in modal, no actual email sent
@@ -15,14 +16,16 @@ Scrappy prototype for vendor management and purchase order requisition (POR) wor
 - 🏦 **Banking validation** — basic format checks only (9-digit routing, etc.)
 - 📊 **Dynamics 365** — "Send to Dynamics" shows success toast, updates status locally
 - ⏳ **Status progression** — POR status changes are manual buttons in prototype (not real workflow)
+- 👥 **Multi-user** — mock data includes PORs from multiple requestors; Jane Smith acts as approver
 
 ---
 
 ## Navigation
 
-- **Dashboard** — home with links to Vendors and PORs
+- **Dashboard** — home with links to Vendors, PORs, and Approvals
 - **Vendors** — list, search, create
-- **PORs** — list, create, view
+- **PORs** — list, create, view (Jane's own PORs)
+- **Approvals** — queue of PORs pending Jane's approval (from all requestors)
 
 ---
 
@@ -30,7 +33,7 @@ Scrappy prototype for vendor management and purchase order requisition (POR) wor
 
 | # | Screen | Route | Description |
 |---|--------|-------|-------------|
-| 1 | Dashboard | `/` | Links to Vendors and PORs |
+| 1 | Dashboard | `/` | Links to Vendors, PORs, and Approvals |
 | 2 | Vendor List | `/vendors` | Search + results + "Add Vendor" button |
 | 3 | Vendor Create | `/vendors/new` | Preliminary questions form |
 | 4 | Email Preview | `/vendors/:id/email` | Edit and send invite email to vendor |
@@ -39,6 +42,7 @@ Scrappy prototype for vendor management and purchase order requisition (POR) wor
 | 7 | POR Create | `/pors/new?vendorId=` | Upload quote → fill form → submit |
 | 8 | POR List | `/pors` | Table of all PORs with status |
 | 9 | POR Detail | `/pors/:id` | View submitted POR (read-only) |
+| 10 | Approvals | `/approvals` | Queue of PORs awaiting approval |
 
 ---
 
@@ -108,6 +112,8 @@ Table columns:
 - Amount
 - Status
 - Submitted Date
+- Days Aged (with SLA color coding)
+- Assigned To
 - Actions (View)
 
 ### POR Detail
@@ -115,3 +121,52 @@ Table columns:
 Read-only view of all 13 fields.
 
 ⏳ *MOCKED: Status can be manually changed via buttons (Approve/Reject) for demo purposes*
+
+---
+
+## Approvals Workflow
+
+Jane Smith acts as an approver and sees PORs submitted by other requestors in her approval queue.
+
+### Requestors (Mock Data)
+
+| Name | Email | Role |
+|------|-------|------|
+| Jane Smith | jane.smith@axon.com | Requestor + Approver (logged-in user) |
+| Tom Bradley | tom.bradley@axon.com | Requestor |
+| Sarah Chen | sarah.chen@axon.com | Requestor |
+| Mike Johnson | mike.johnson@axon.com | Requestor |
+
+### Approvals Queue (`/approvals`)
+
+Shows all PORs with status `submitted` or `pending_approval` from ALL requestors.
+
+**Table columns:**
+- Requestor Name
+- Vendor Name
+- Description
+- Amount
+- Days Aged (with SLA color coding)
+- Assigned To
+- Actions (View / Quick Approve / Quick Reject)
+
+**Filtering:**
+- Default: Shows only items assigned to Jane Smith
+- Toggle: "Show All" to see entire queue
+
+**Summary Stats (top of page):**
+- Total pending approvals
+- Items assigned to Jane
+- Items overdue (8+ days)
+
+### Approval Actions
+
+From the Approvals list, Jane can:
+1. **View** — Opens POR Detail page
+2. **Quick Approve** — Approves directly from list (with confirmation)
+3. **Quick Reject** — Rejects directly from list (requires reason in modal)
+
+On approval/rejection:
+- Status updates to `approved` or `rejected`
+- Toast confirmation shown
+- Item removed from queue (or visually marked as actioned)
