@@ -1,8 +1,9 @@
 import { ArrowLeft, FileText, Plus, Send, Trash2, Upload } from 'lucide-react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
-import { toast } from 'sonner'
 import { getVendor, getVendors, savePOR } from '../lib/storage'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useState } from 'react'
+
+import { toast } from 'sonner'
 
 // Dropdown options from DATA.md
 const COST_CENTERS = [
@@ -63,6 +64,13 @@ const MOCK_OCR_RESPONSE = {
   endDate: '2025-06-30',
 }
 
+// Assignees for POR workflow
+const ASSIGNEES = ['Brittany Bagley', 'Dave Iacovelli', 'Jennifer Mak']
+
+function getRandomAssignee() {
+  return ASSIGNEES[Math.floor(Math.random() * ASSIGNEES.length)]
+}
+
 function createEmptyLineItem(lineNumber) {
   return {
     id: crypto.randomUUID(),
@@ -99,25 +107,20 @@ export default function PORCreate() {
   const [country, setCountry] = useState('USA - United States')
   const [attachments, setAttachments] = useState('')
 
-  // Line items
-  const [lineItems, setLineItems] = useState([createEmptyLineItem(1)])
-
-  // Validation errors
-  const [errors, setErrors] = useState({})
-
-  // Pre-fill vendor if coming from vendor detail
-  useEffect(() => {
+  // Line items - pre-fill vendor info if coming from vendor detail page
+  const [lineItems, setLineItems] = useState(() => {
+    const initialItem = createEmptyLineItem(1)
     if (vendorIdParam) {
       const vendor = getVendor(vendorIdParam)
       if (vendor) {
-        setSelectedVendorId(vendor.id)
-        // Pre-fill vendor info in first line item
-        setLineItems(prev => prev.map((item, idx) =>
-          idx === 0 ? { ...item, vendorName: vendor.name, vendorKey: vendor.id } : item
-        ))
+        return [{ ...initialItem, vendorName: vendor.name, vendorKey: vendor.id }]
       }
     }
-  }, [vendorIdParam])
+    return [initialItem]
+  })
+
+  // Validation errors
+  const [errors, setErrors] = useState({})
 
   // Calculate totals
   const netAmount = lineItems.reduce((sum, item) => {
@@ -152,7 +155,7 @@ export default function PORCreate() {
           : item
       ))
 
-      displayToast('OCR complete! Form pre-filled with extracted data.')
+      toast.success('OCR complete! Form pre-filled with extracted data.')
     }, 1500)
   }, [])
 
@@ -191,11 +194,6 @@ export default function PORCreate() {
     )
   }
 
-  // Toast helper
-  const displayToast = (message) => {
-    toast.success(message)
-  }
-
   // Validation
   const validateForm = () => {
     const newErrors = {}
@@ -232,7 +230,7 @@ export default function PORCreate() {
 
     const vendor = getVendor(selectedVendorId)
     const por = {
-      id: `POR-${Date.now()}`,
+      id: `POR-${crypto.randomUUID().slice(0, 8)}`,
       vendorId: selectedVendorId,
       vendorName: vendor?.name || '',
       name,
@@ -250,15 +248,16 @@ export default function PORCreate() {
       submittedAt: new Date().toISOString(),
       createdAt: new Date().toISOString(),
       createdBy: 'jane.smith@axon.com',
+      assignee: getRandomAssignee(),
     }
 
     savePOR(por)
 
     if (sendToDynamics) {
-      displayToast('✅ POR sent to Dynamics 365 successfully!')
+      toast.success('✅ POR sent to Dynamics 365 successfully!')
       console.log('📊 Dynamics 365 Integration (MOCKED):', por)
     } else {
-      displayToast('POR saved successfully!')
+      toast.success('POR saved successfully!')
     }
 
     setTimeout(() => navigate('/pors'), 1500)

@@ -1,6 +1,7 @@
+import { FileText, Home, Users } from 'lucide-react'
 import { Link, Outlet, useLocation } from 'react-router-dom'
+
 import { Toaster } from 'sonner'
-import { Home, Users, FileText } from 'lucide-react'
 
 const navItems = [
   { to: '/', label: 'Dashboard', icon: Home },
@@ -16,10 +17,16 @@ export default function Layout() {
       <Toaster position="top-right" richColors />
       
       {/* Header */}
-      <header className="bg-slate-900 text-white shadow-lg">
+      <header className="bg-yellow-50 text-slate-900 shadow-sm border-b border-yellow-100">
         <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
           <div className="flex items-center gap-8">
-            <h1 className="text-xl font-bold tracking-tight">Procurement-One</h1>
+            <Link to="/">
+              <img 
+                src="/PORTAL_trans.png" 
+                alt="Procurement-One" 
+                className="h-8"
+              />
+            </Link>
             <nav className="flex gap-1">
               {navItems.map(({ to, label, icon: Icon }) => {
                 const isActive = location.pathname === to || 
@@ -30,8 +37,8 @@ export default function Layout() {
                     to={to}
                     className={`flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
                       isActive
-                        ? 'bg-slate-700 text-white'
-                        : 'text-slate-300 hover:bg-slate-800 hover:text-white'
+                        ? 'bg-yellow-200 text-slate-900'
+                        : 'text-slate-600 hover:bg-yellow-100 hover:text-slate-900'
                     }`}
                   >
                     <Icon size={16} />
@@ -42,10 +49,10 @@ export default function Layout() {
             </nav>
           </div>
           <div className="flex items-center gap-2 text-sm">
-            <div className="w-8 h-8 rounded-full bg-amber-500 flex items-center justify-center font-semibold text-slate-900">
+            <div className="w-8 h-8 rounded-full bg-amber-500 flex items-center justify-center font-semibold text-white">
               JS
             </div>
-            <span className="text-slate-300">Jane Smith</span>
+            <span className="text-slate-600">Jane Smith</span>
           </div>
         </div>
       </header>

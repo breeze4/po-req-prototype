@@ -1,4 +1,4 @@
-import { ArrowLeft, Building2, Calendar, CheckCircle, DollarSign, FileText, XCircle } from 'lucide-react'
+import { ArrowLeft, Building2, Calendar, CheckCircle, Clock, DollarSign, FileText, User, XCircle } from 'lucide-react'
 import { Link, useParams } from 'react-router-dom'
 import { toast } from 'sonner'
 import { getPOR, savePOR } from '../lib/storage'
@@ -27,6 +27,30 @@ function formatDate(dateString) {
     day: 'numeric',
     year: 'numeric',
   })
+}
+
+function getDaysAged(dateString) {
+  if (!dateString) return 0
+  const created = new Date(dateString)
+  const now = new Date()
+  const diffTime = Math.abs(now - created)
+  const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24))
+  return diffDays
+}
+
+// SLA thresholds: green < 3 days, yellow 3-7 days, red > 7 days
+function getAgingStyles(days, status) {
+  // Completed statuses don't need aging indicators
+  if (status === 'approved' || status === 'rejected') {
+    return { bg: 'bg-slate-100', text: 'text-slate-600', icon: 'text-slate-400' }
+  }
+  if (days <= 2) {
+    return { bg: 'bg-emerald-100', text: 'text-emerald-600', icon: 'text-emerald-600' }
+  } else if (days <= 7) {
+    return { bg: 'bg-amber-100', text: 'text-amber-600', icon: 'text-amber-600' }
+  } else {
+    return { bg: 'bg-red-100', text: 'text-red-600', icon: 'text-red-600' }
+  }
 }
 
 export default function PORDetail() {
@@ -87,41 +111,70 @@ export default function PORDetail() {
       </div>
 
       {/* Summary Cards */}
-      <div className="grid md:grid-cols-3 gap-4">
-        <div className="bg-white rounded-xl border border-slate-200 p-4">
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-slate-100 rounded-lg">
-              <Building2 className="text-slate-600" size={20} />
+      {(() => {
+        const daysAged = getDaysAged(por.createdAt)
+        const agingStyles = getAgingStyles(daysAged, por.status)
+        
+        return (
+          <div className="grid md:grid-cols-5 gap-4">
+            <div className="bg-white rounded-xl border border-slate-200 p-4">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-slate-100 rounded-lg">
+                  <Building2 className="text-slate-600" size={20} />
+                </div>
+                <div>
+                  <p className="text-sm text-slate-500">Vendor</p>
+                  <p className="font-semibold text-slate-900">{por.vendorName}</p>
+                </div>
+              </div>
             </div>
-            <div>
-              <p className="text-sm text-slate-500">Vendor</p>
-              <p className="font-semibold text-slate-900">{por.vendorName}</p>
+            <div className="bg-white rounded-xl border border-slate-200 p-4">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-emerald-100 rounded-lg">
+                  <DollarSign className="text-emerald-600" size={20} />
+                </div>
+                <div>
+                  <p className="text-sm text-slate-500">Total Amount</p>
+                  <p className="font-semibold text-slate-900">{formatCurrency(por.totalAmount, por.currency)}</p>
+                </div>
+              </div>
+            </div>
+            <div className="bg-white rounded-xl border border-slate-200 p-4">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-blue-100 rounded-lg">
+                  <Calendar className="text-blue-600" size={20} />
+                </div>
+                <div>
+                  <p className="text-sm text-slate-500">Submitted</p>
+                  <p className="font-semibold text-slate-900">{formatDate(por.submittedAt)}</p>
+                </div>
+              </div>
+            </div>
+            <div className="bg-white rounded-xl border border-slate-200 p-4">
+              <div className="flex items-center gap-3">
+                <div className={`p-2 ${agingStyles.bg} rounded-lg`}>
+                  <Clock className={agingStyles.icon} size={20} />
+                </div>
+                <div>
+                  <p className="text-sm text-slate-500">Days Aged</p>
+                  <p className={`font-semibold ${agingStyles.text}`}>{daysAged} days</p>
+                </div>
+              </div>
+            </div>
+            <div className="bg-white rounded-xl border border-slate-200 p-4">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-purple-100 rounded-lg">
+                  <User className="text-purple-600" size={20} />
+                </div>
+                <div>
+                  <p className="text-sm text-slate-500">Assigned To</p>
+                  <p className="font-semibold text-slate-900">{por.assignee || '—'}</p>
+                </div>
+              </div>
             </div>
           </div>
-        </div>
-        <div className="bg-white rounded-xl border border-slate-200 p-4">
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-emerald-100 rounded-lg">
-              <DollarSign className="text-emerald-600" size={20} />
-            </div>
-            <div>
-              <p className="text-sm text-slate-500">Total Amount</p>
-              <p className="font-semibold text-slate-900">{formatCurrency(por.totalAmount, por.currency)}</p>
-            </div>
-          </div>
-        </div>
-        <div className="bg-white rounded-xl border border-slate-200 p-4">
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-blue-100 rounded-lg">
-              <Calendar className="text-blue-600" size={20} />
-            </div>
-            <div>
-              <p className="text-sm text-slate-500">Submitted</p>
-              <p className="font-semibold text-slate-900">{formatDate(por.submittedAt)}</p>
-            </div>
-          </div>
-        </div>
-      </div>
+        )
+      })()}
 
       {/* Header Information */}
       <div className="bg-white rounded-xl border border-slate-200 p-6 space-y-4">
