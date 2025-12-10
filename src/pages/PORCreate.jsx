@@ -57,7 +57,7 @@ const BILLING_FREQUENCIES = [
 
 // Mock OCR response
 const MOCK_OCR_RESPONSE = {
-  vendorName: 'Acme Consulting LLC',
+  vendorName: 'Skydio',
   amount: 15000.0,
   description: 'Professional services engagement',
   startDate: '2025-01-15',

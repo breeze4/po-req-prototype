@@ -10,7 +10,7 @@ import { getVendor, saveVendor } from '../lib/storage'
 
 // Mock OCR response
 const MOCK_OCR_DATA = {
-  vendorName: "Acme Consulting LLC",
+  vendorName: "Skydio",
   amount: 15000.00,
   description: "Professional services engagement",
   startDate: "2025-01-15",
