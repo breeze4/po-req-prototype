@@ -1,16 +1,37 @@
-# React + Vite
+# PORtal
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A prototype for vendor management and purchase order requisition (POR) workflow.
 
-Currently, two official plugins are available:
+**Live demo:** https://axon-po-req-prototype.netlify.app
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Prototype Notice
 
-## React Compiler
+This is a UI prototype only. There is no backend, database, or external API integration.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+All data is stored in browser localStorage and resets when cleared. The app includes mock data that seeds automatically on first load.
 
-## Expanding the ESLint configuration
+### Mocked Features
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+| Feature | Behavior |
+|---------|----------|
+| Email sending | Shows content in modal, nothing sent |
+| PDF downloads | Toast notification, no file generated |
+| File uploads | Stores filename only, no actual upload |
+| OCR extraction | Returns hardcoded values |
+| Signature detection | Always succeeds after 1s delay |
+| Send to Dynamics | Updates local status only |
+
+### Hardcoded User
+
+The app assumes you are logged in as Jane Smith (jane.smith@axon.com), who acts as both a requestor and approver.
+
+## Running Locally
+
+```bash
+npm install
+npm run dev
+```
+
+## Tech Stack
+
+React 19, Vite, Tailwind CSS 4, React Router 7
