@@ -1,5 +1,6 @@
+import { ArrowRight, CheckSquare, FileText, Users } from 'lucide-react'
+
 import { Link } from 'react-router-dom'
-import { Users, FileText, ArrowRight, CheckSquare } from 'lucide-react'
 import { getPORs } from '../lib/storage'
 
 export default function Dashboard() {
@@ -13,7 +14,7 @@ export default function Dashboard() {
     <div className="space-y-8">
       <div>
         <h1 className="text-3xl font-bold text-slate-900">Dashboard</h1>
-        <p className="mt-2 text-slate-600">Welcome to Procurement-One. Manage vendors and purchase order requisitions.</p>
+        <p className="mt-2 text-slate-600">Welcome to PORtal. Manage vendors and purchase order requisitions.</p>
       </div>
 
       <div className="grid md:grid-cols-3 gap-6">

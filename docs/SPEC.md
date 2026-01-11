@@ -1,4 +1,4 @@
-# Procurement-One
+# PORtal
 
 Scrappy prototype for vendor management and purchase order requisition (POR) workflow. Replaces a gigantic complex horrible process.
 

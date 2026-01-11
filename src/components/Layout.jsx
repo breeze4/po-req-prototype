@@ -1,8 +1,8 @@
 import { CheckSquare, FileText, Home, Users } from 'lucide-react'
 import { Link, Outlet, useLocation } from 'react-router-dom'
 
-import { Toaster } from 'sonner'
 import DebugBar from './DebugBar'
+import { Toaster } from 'sonner'
 
 const navItems = [
   { to: '/', label: 'Dashboard', icon: Home },
@@ -25,7 +25,7 @@ export default function Layout() {
             <Link to="/">
               <img 
                 src="/PORTAL_trans.png" 
-                alt="Procurement-One" 
+                alt="PORtal" 
                 className="h-8"
               />
             </Link>
